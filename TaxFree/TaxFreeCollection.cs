@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace np1
+namespace TaxFree
 {
     class TaxFreeCollection
     {
@@ -78,7 +78,7 @@ namespace np1
                 var sortParam = " ";
                 Console.WriteLine("Enter sort paramtr: ");
                 sortParam = Console.ReadLine();
-                foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(Type.GetType("np1.TaxFree")))
+                foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(Type.GetType("TaxFree.TaxFree")))
                 {
                     if (sortParam == prop.Name)
                     {

@@ -9,7 +9,7 @@ using System.IO;
 using System.Text.Json;
 using Newtonsoft.Json;
 
-namespace np1
+namespace TaxFree
 {
     class TaxFree
     {
