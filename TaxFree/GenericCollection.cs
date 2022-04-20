@@ -8,22 +8,22 @@ using System.Text;
 
 namespace TaxFree
 {
-    class TaxFreeCollection
+    class GenericCollection<T> where T : IGeneralization, new()
     {
-        List<TaxFree> taxFrees = new List<TaxFree>();
+        List<T> taxFrees = new List<T>();
 
 
-        public TaxFreeCollection(string filename)
+        public GenericCollection(string filename)
         {
             using (StreamReader r = new StreamReader(filename))
             {
                 string json = r.ReadToEnd();
                 try
                 {
-                    var taxFreesJson = JsonConvert.DeserializeObject<List<TaxFree>>(json);
+                    var taxFreesJson = JsonConvert.DeserializeObject<List<T>>(json);
                     if (taxFreesJson == null)
                     {
-                        taxFrees = new List<TaxFree>();
+                        taxFrees = new List<T>();
                     }
                     for (int i = 0; i < taxFreesJson.Count; i++)
                     {
@@ -35,6 +35,7 @@ namespace TaxFree
                         {
                             Console.WriteLine($"Element {i} is invalid");
                         }
+                        //taxFrees.Add(taxFreesJson[i]);
                     }
                 }
                 catch (Exception ex)
@@ -50,16 +51,16 @@ namespace TaxFree
             File.WriteAllText(filename, json);
         }
 
-        public void display(List<TaxFree> list)
+        public void display(List<T> list)
         {
-            foreach (TaxFree elem in list)
+            foreach (T elem in list)
             {
                 Console.WriteLine(elem.ToString());
             }
         }
         public void addNew()
         {
-            TaxFree tax = new TaxFree();
+            T tax = new T();
             tax.initNew();
             taxFrees.Add(tax);
         }
@@ -75,7 +76,9 @@ namespace TaxFree
                 var sortParam = " ";
                 Console.WriteLine("Enter sort paramtr: ");
                 sortParam = Console.ReadLine();
-                foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(Type.GetType("TaxFree.TaxFree")))
+                T tax = new T();
+
+                foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(tax))
                 {
                     if (sortParam == prop.Name)
                     {
@@ -85,9 +88,9 @@ namespace TaxFree
                 }
             }
         }
-        public List<TaxFree> Search(string subStr)
+        public List<T> Search(string subStr)
         {
-            bool SearchPredicater(TaxFree e)
+            bool SearchPredicater(T e)
             {
                 foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(e))
                     if (prop.GetValue(e).ToString().Contains(subStr)) return true;
@@ -122,10 +125,10 @@ namespace TaxFree
         }
         public void printAllText(string filename)
         {
-            foreach (TaxFree tax in taxFrees)
+            foreach (T tax in taxFrees)
             {
                 Console.WriteLine(tax.ToString());
             }
         }
-    }   
+    }
 }

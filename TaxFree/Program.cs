@@ -10,12 +10,8 @@ namespace TaxFree
     {
         static void Main(string[] args)
         {
-
-
-
-
             var file = readfile();
-            var colection = new TaxFreeCollection(file);
+            var colection = new GenericCollection<TaxFree>(file);
 
 
             while (true)

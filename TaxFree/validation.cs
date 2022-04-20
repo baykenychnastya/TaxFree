@@ -84,7 +84,7 @@ namespace TaxFree
         public static bool validateVatCode(string value)
         {
             string pattern = @"^VA.{3,3}_.{2,2}_.{3,3}$";
-            if (Regex.IsMatch(value, pattern))
+            if (value != null && Regex.IsMatch(value, pattern))
             {
                 return true;
             }
