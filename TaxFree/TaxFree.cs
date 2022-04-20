@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 
 namespace TaxFree
 {
-    class TaxFree
+    class TaxFree : IGeneralization
     {
         private Guid id;
         private string company;
@@ -20,13 +20,14 @@ namespace TaxFree
         private DateTime dateOfPurchase;
         private string vatCode;
         private DateTime dateTaxFreeRegistration;
+
         private void Input()
         {
-            foreach(PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
+            foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
             {
-                if(prop.Name != "Id")
+                if (prop.Name != "Id")
                 {
-                    while(true)
+                    while (true)
                     {
                         Console.WriteLine($"Enter {prop.Name}: ");
 
@@ -44,7 +45,7 @@ namespace TaxFree
                         {
                             break;
                         }
-                    }        
+                    }
                 }
             }
         }
@@ -64,7 +65,7 @@ namespace TaxFree
             return null;
         }
 
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
         public string Company
         {
             get => company;
