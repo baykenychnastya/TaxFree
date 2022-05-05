@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.IO;
 using System.Text.Json;
 using Newtonsoft.Json;
+using TaxFree.Users;
 
 namespace TaxFree
 {
@@ -21,11 +22,12 @@ namespace TaxFree
         private string vatCode;
         private DateTime dateTaxFreeRegistration;
 
+
         private void Input()
         {
             foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
             {
-                if (prop.Name != "Id")
+                if (prop.Name != "Id" && prop.Name != "Status" && prop.Name != "CreatedBy" && prop.Name != "Comment")
                 {
                     while (true)
                     {
@@ -52,7 +54,73 @@ namespace TaxFree
 
         public void Update()
         {
+            while(true)
+            {
+                Console.WriteLine("Enter Company: ");
+                this.company = Console.ReadLine();
+                if (validation.validateRequiredStringWithTrim(this.company))
+                {
+                    break;
+                }
+                continue;
+            }
+
+            while (true)
+            {
+                Console.WriteLine("Enter Country: ");
+                this.country = Console.ReadLine();
+                if (validation.validateCountry(this.country))
+                {
+                    break;
+                }
+                continue;
+            }
+
+            while (true)
+            {
+                Console.WriteLine("Enter VatRate: ");
+                this.vatRate = validation.readIntType();              
+                if (validation.validateCountry(this.country))
+                {
+                    break;
+                }
+                continue;
+            }
+
+            
+            Console.WriteLine("Enter DateOfPurchase: ");
+            this.dateOfPurchase = validation.readDateType();
+
+            while (true)
+            {
+                Console.WriteLine("Enter VatCode: ");
+                this.vatCode = Console.ReadLine();
+                if (validation.validateVatCode(this.vatCode))
+                {
+                    break;
+                }
+                continue;
+            }
+
+            while (true)
+            {
+                Console.WriteLine("Enter DateTaxFreeRegistration: ");
+                this.dateTaxFreeRegistration = validation.readDateType();
+                if (validation.validateLoverDate(this.dateOfPurchase, this.dateTaxFreeRegistration)) 
+                {
+                    break;
+                }
+                continue;
+            }
+
+        }
+
+        public void initNew(Guid userId)
+        {
             Input();
+            this.Id = Guid.NewGuid();
+            this.Status = Status.Draft;
+            this.CreatedBy = userId;
         }
 
 
@@ -65,7 +133,11 @@ namespace TaxFree
             return null;
         }
 
-    public Guid Id { get; set; }
+        public Guid Id { get; set; }
+        public Status Status { get; set; }
+        public Guid CreatedBy { get; set; }
+        public string Comment { get; set; } 
+
         public string Company
         {
             get => company;
@@ -134,11 +206,7 @@ namespace TaxFree
         {           
         }
 
-        public void initNew()
-        {
-            Input();
-            this.Id = Guid.NewGuid();
-        }
+        
 
         public TaxFree(Guid ID, string company, string country, int vatRate,
             DateTime dateOfPurchase, string vatCode, DateTime dateTaxFreeRegistration)
