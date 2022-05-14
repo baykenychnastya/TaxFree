@@ -40,8 +40,17 @@ namespace TaxFree.Users
 
         public User addNew()
         {
+            
             Staff st = new Staff();
             st.Input();
+            foreach (Staff staff in users)
+            {
+                if (st.Email == staff.Email)
+                {
+                    Console.WriteLine("there is already such a user!!!");
+                    return addNew();
+                }               
+            }
             users.Add(st);
             return st;
         }
@@ -54,6 +63,7 @@ namespace TaxFree.Users
             }
         }
 
+        
         
 
 

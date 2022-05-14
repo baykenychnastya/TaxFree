@@ -12,15 +12,23 @@ namespace TaxFree.Users
         protected List<T> users = new List<T>();
 
         public User LogIn()
-        {
-           
+        {          
             Console.WriteLine("Enter Email Address: ");
             var email = Console.ReadLine();
             Console.WriteLine("Enter Password: ");
             var password = Console.ReadLine();
             var user = users.FirstOrDefault(u => u.Email == email && SecurePasswordHasher.Verify(password, u.Password));              
-            return user;
-            
+            return user;           
+        }
+
+        public List<string> allEmail()
+        {
+            var emails = new List<string>();
+            foreach (User u in users)
+            {
+                emails.Add(u.Email);
+            }
+            return emails;
         }
        
     }

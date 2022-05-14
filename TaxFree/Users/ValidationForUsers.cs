@@ -49,7 +49,7 @@ namespace TaxFree.Users
                 }
                 catch (Exception h)
                 {
-                    Console.WriteLine("Incorect id");
+                    Console.WriteLine("Incorect value");
                     continue;
                 }
                 return value;
@@ -67,7 +67,7 @@ namespace TaxFree.Users
                 }
                 catch (Exception h)
                 {
-                    Console.WriteLine("Incorect id");
+                    Console.WriteLine("Incorect value");
                     continue;
                 }
                 return value;

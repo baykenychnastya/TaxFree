@@ -108,11 +108,13 @@ namespace TaxFree
         {
             for (int i = 0; i < taxFrees.Count(); i++)
             {
-                if (taxFrees[i].Id == id)
+                if (taxFrees[i].Id == id && taxFrees[i].Status == Status.Draft)
                 {
                     taxFrees.Remove(taxFrees[i]);
+                    return;
                 }
             }
+            Console.WriteLine("TaxFree no found");
         }
 
         public void editOnId(Guid id)
