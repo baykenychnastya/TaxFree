@@ -7,10 +7,14 @@ using Npgsql;
 using Microsoft.AspNetCore.Http;
 using WebApplication2.DTOs;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Authorization;
+using WebApplication2.Models;
+using System.Security.Claims;
 
 namespace WebApplication2.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
     public class TaxFreeController : ControllerBase
     {
@@ -19,7 +23,7 @@ namespace WebApplication2.Controllers
         {
             using (var context = new TaxFreeContext(null))
             {
-                var tax = context.TaxFrees.ToList();
+                var tax = context.TaxFrees.Where(t => t.CreatedBy == GetId()).ToList();
                 return tax;
             }
 
@@ -31,7 +35,7 @@ namespace WebApplication2.Controllers
             using var context = new TaxFreeContext(null);
             var taxFree = context.TaxFrees.FirstOrDefault(t => t.Id == id);
 
-            if (taxFree is null)
+            if (taxFree is null || GetId() != taxFree.CreatedBy)
             {
                 return NotFound(new { message = $"TaxFree with { id } not found!" });
             }
@@ -40,29 +44,27 @@ namespace WebApplication2.Controllers
         }
 
         [HttpPost]
-        public ActionResult<TaxFree> PostNewTaxFree(TaxFreeDTO tax)
-        {
-            //            if (!tax.isValid())
-            //                return BadRequest("Invalid data.");
-
-
+        public ActionResult<TaxFreeDTO> PostNewTaxFree(TaxFreeDTO tax)
+        { 
             using (var context = new TaxFreeContext(null))
             {
-
-                context.TaxFrees.Add(new TaxFree()
+                TaxFree newTaxFree = new TaxFree
                 {
                     Company = tax.Company,
                     Country = tax.Country,
                     VatRate = tax.VatRate,
                     DateOfPurchase = tax.DateOfPurchase,
                     VatCode = tax.VatCode,
-                    DateTaxFreeRegistration = tax.DateTaxFreeRegistration
-                }); ;
+                    DateTaxFreeRegistration = tax.DateTaxFreeRegistration,
+                    CreatedBy = GetId()
+                };
 
+                context.TaxFrees.Add(newTaxFree);
                 context.SaveChanges();
+                            return Ok(new { message = $"TaxFree with {newTaxFree.Id} succesfuly added" });
+
             }
 
-            return Ok();
         }
 
         [HttpDelete("{id:Guid}")]
@@ -70,7 +72,7 @@ namespace WebApplication2.Controllers
         {
             using var context = new TaxFreeContext(null);
             var taxFree = context.TaxFrees.FirstOrDefault(t => t.Id == id);
-            if (taxFree is null)
+            if (taxFree is null || GetId() != taxFree.CreatedBy)
             {
                 return NotFound(new { message = $"TaxFree with { id } not found!" });
             }
@@ -83,15 +85,11 @@ namespace WebApplication2.Controllers
         public ActionResult<IEnumerable<TaxFree>> Serch([FromQuery] string search_string, [FromQuery] string sort_by = nameof(TaxFree.Id), [FromQuery] bool sort_type = true)
         {
             using var context = new TaxFreeContext(null);
-            //var filteredTaxFrees = context.TaxFrees.Where(serch => serch.Id.ToString().Contains(search_string) ||
-            //serch.Country.Contains(search_string) || serch.Country.Contains(search_string) ||
-            //serch.VatRate.ToString().Contains(search_string) || serch.DateOfPurchase.ToString() == search_string || serch.VatCode == search_string ||
-            //serch.DateTaxFreeRegistration.ToString() == search_string).ToList();
             if(search_string is null)
             {
                 return BadRequest(new { message = $"Serch string can't be null" });
             }
-            var filteredTaxFrees = context.TaxFrees.ToList().Where(taxFree => taxFree.ToString().Contains(search_string)).ToList();
+            var filteredTaxFrees = context.TaxFrees.Where(t => t.CreatedBy == GetId()).ToList().Where(taxFree => taxFree.ToString().Contains(search_string)).ToList();
 
             try
             {
@@ -142,7 +140,7 @@ namespace WebApplication2.Controllers
             using (var context = new TaxFreeContext(null))
             {
                 var taxFree = context.TaxFrees.FirstOrDefault(t => t.Id == id);
-                if (taxFree is null)
+                if (taxFree is null || GetId() != taxFree.CreatedBy)
                 {
                     return NotFound(new { message = $"TaxFree with { id } not found!" });
                 }
@@ -157,6 +155,18 @@ namespace WebApplication2.Controllers
             }
 
             return Ok();
+        }
+
+        private  Guid GetId()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                // or
+                return Guid.Parse(identity.FindFirst("Id").Value);
+            }
+            return Guid.Empty;
         }
     }
 }

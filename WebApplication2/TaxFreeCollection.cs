@@ -60,10 +60,10 @@ namespace WebApplication2
                 Console.WriteLine(elem.ToString());
             }
         }
-        public void addNew()
+        public void addNew(Guid id)
         {
             TaxFree tax = new TaxFree();
-            tax.initNew();
+            tax.initNew(id);
             taxFrees.Add(tax);
         }
         public void Sort(string field)
