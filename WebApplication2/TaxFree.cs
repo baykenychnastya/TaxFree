@@ -23,6 +23,7 @@ namespace WebApplication2
         private DateTime dateOfPurchase;
         private string vatCode;
         private DateTime dateTaxFreeRegistration;
+
         private void Input()
         {
             foreach (PropertyDescriptor prop in TypeDescriptor.GetProperties(this))
@@ -126,6 +127,7 @@ namespace WebApplication2
         }
 
         public Guid Id { get; set; }
+        public Guid CreatedBy { get; set; }
         public string Company
         {
             get => company;
@@ -194,10 +196,11 @@ namespace WebApplication2
         {
         }
 
-        public void initNew()
+        public void initNew(Guid userId)
         {
             Input();
             this.Id = Guid.NewGuid();
+            this.CreatedBy = userId;
         }
 
         public TaxFree(Guid ID, string company, string country, int vatRate,

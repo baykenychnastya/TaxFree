@@ -12,11 +12,11 @@ namespace WebApplication2.DTOs
         public Guid id;
         public string Company { get; set; }
         public string Country { get; set; }
-        [Range (1, 41)]
         public int VatRate { get; set; }
         public DateTime DateOfPurchase { get; set; }
         public string VatCode { get; set; }       
         public DateTime DateTaxFreeRegistration { get; set; }
+        public Guid CreatedBy { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -43,6 +43,11 @@ namespace WebApplication2.DTOs
             if (!validation.validateLoverDate(DateOfPurchase, DateTaxFreeRegistration))
             {
                 yield return new ValidationResult("dateTaxFreeRegistration nust be more than dateOfPurchase");
+            }
+
+            if (!validation.validateVatRate(VatRate))
+            {
+                yield return new ValidationResult("VatRate must be in range 1-41 ");
             }
         }
 
